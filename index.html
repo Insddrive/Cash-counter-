@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cash Counter</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Inter & Noto Sans Gurmukhi) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Gurmukhi:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* ਗੁਰਮੁਖੀ ਫੌਂਟ ਨੂੰ ਖਾਸ ਥਾਵਾਂ 'ਤੇ ਲਾਗੂ ਕਰੋ */
+        .font-gurmukhi {
+            font-family: 'Noto Sans Gurmukhi', sans-serif;
+        }
+        /* Chrome, Safari, Edge, Opera ਤੋਂ ਨੰਬਰ ਇਨਪੁਟ ਸਪਿਨਰਾਂ ਨੂੰ ਹਟਾਓ */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        /* Firefox ਤੋਂ ਨੰਬਰ ਇਨਪੁਟ ਸਪਿਨਰਾਂ ਨੂੰ ਹਟਾਓ */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- ਐਪ ਲਈ ਮੁੱਖ ਕੰਟੇਨਰ -->
+    <div class="max-w-sm mx-auto bg-white min-h-screen shadow-lg">
+        
+        <!-- ਹੈਡਰ (ਹੋਰ ਕੰਪੈਕਟ) -->
+        <header class="bg-indigo-900 text-white py-2 px-4 flex items-center justify-center">
+            <!-- ਸਿਰਫ਼ ਟਾਈਟਲ -->
+            <nav class="flex items-center space-x-4">
+                <a href="#" class="text-white font-semibold border-b-2 border-white pb-1 text-base">Cash Counter</a>
+            </nav>
+        </header>
+
+        <!-- ਮੁੱਖ ਸਮੱਗਰੀ ਖੇਤਰ -->
+        <main class="p-3">
+
+            <!-- Payee ਅਤੇ Date ਇਨਪੁਟਸ -->
+            <div class="flex justify-between items-center mb-3 space-x-2">
+                <!-- Payee Name -->
+                <div class="relative flex-1">
+                    <input type="text" id="payeeName" placeholder="Enter Payee Name" class="w-full pl-3 pr-10 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600">
+                    <span class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400">
+                        <!-- ਯੂਜ਼ਰ ਆਈਕਨ -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                </div>
+                <!-- Date -->
+                <div class="flex items-center bg-gray-100 border border-gray-300 p-1.5 rounded-lg space-x-2">
+                    <span id="currentDate" class="font-medium text-gray-700 text-sm"></span> <!-- ਮਿਤੀ JS ਰਾਹੀਂ ਆਵੇਗੀ -->
+                    <!-- ਕੈਲੰਡਰ ਆਈਕਨ -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- ਸੰਖੇਪ ਬਾਕਸ -->
+            <div class="grid grid-cols-3 gap-2 mb-3">
+                <div class="bg-yellow-100 border border-yellow-300 text-yellow-800 p-2 rounded-lg text-center">
+                    <div class="text-xs font-medium">Notes</div>
+                    <div id="totalNotes" class="text-xl font-bold">0</div>
+                </div>
+                <div class="bg-green-100 border border-green-300 text-green-800 p-2 rounded-lg text-center">
+                    <div class="text-xs font-medium">Cash Total</div>
+                    <div id="cashTotal" class="text-xl font-bold">0</div>
+                </div>
+                <div class="bg-blue-100 border border-blue-300 text-blue-800 p-2 rounded-lg text-center">
+                    <div class="text-xs font-medium">Total Amount</div>
+                    <div id="totalAmount" class="text-xl font-bold">0</div>
+                </div>
+            </div>
+
+            <!-- ਆਨਲਾਈਨ ਪੇਮੈਂਟ ਇਨਪੁਟ -->
+            <div class="mb-3 flex items-center gap-2">
+                <label for="onlinePaymentInput" class="font-medium text-gray-700 text-sm whitespace-nowrap">Online In:</label>
+                <input type="number" id="onlinePaymentInput" placeholder="Enter Online Amount" class="w-full p-1.5 border border-gray-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-indigo-600">
+            </div>
+
+            <!-- ਨਵਾਂ: ਗੁਰਮੁਖੀ ਕਨਵਰਟਰ ਸੈਕਸ਼ਨ -->
+            <div class="grid grid-cols-2 gap-2 mb-4 p-2 border border-gray-200 rounded-lg">
+                <div>
+                    <label for="numberInput" class="block text-sm font-medium text-gray-700 mb-1">ਅੰਕ</label>
+                    <input type="number" id="numberInput" placeholder="123..." class="w-full p-1.5 border border-gray-300 rounded-lg text-left focus:outline-none focus:ring-2 focus:ring-indigo-600">
+                </div>
+                <div>
+                    <label for="gurmukhiOutput" class="block text-sm font-medium text-gray-700 mb-1">ਗੁਰਮੁਖੀ</label>
+                    <input type="text" id="gurmukhiOutput" placeholder="੧੨੩..." readonly class="w-full p-1.5 border border-gray-300 rounded-lg text-left bg-gray-50 font-gurmukhi text-lg">
+                </div>
+            </div>
+
+            <!-- ਨੋਟ ਗਿਣਤੀ ਕਰਨ ਵਾਲਾ -->
+            <div class="space-y-2">
+                <!-- 500 -->
+                <div class="flex items-center gap-2" data-value="500">
+                    <img src="https://placehold.co/56x28/a8a29e/ffffff?text=500" alt="500 Note" class="w-14 h-7 object-cover rounded">
+                    <span class="font-bold text-base w-10 text-right">500</span>
+                    <span class="font-medium text-gray-500">X</span>
+                    <input type="number" class="denomination-input w-full p-1.5 border border-gray-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-indigo-600">
+                    <span class="font-medium text-gray-500">=</span>
+                    <span class="row-total font-bold text-base w-20 text-right">0</span>
+                </div>
+                <!-- 200 -->
+                <div class="flex items-center gap-2" data-value="200">
+                    <img src="https://placehold.co/56x28/f97316/ffffff?text=200" alt="200 Note" class="w-14 h-7 object-cover rounded">
+                    <span class="font-bold text-base w-10 text-right">200</span>
+                    <span class="font-medium text-gray-500">X</span>
+                    <input type="number" class="denomination-input w-full p-1.5 border border-gray-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-indigo-600">
+                    <span class="font-medium text-gray-500">=</span>
+                    <span class="row-total font-bold text-base w-20 text-right">0</span>
+                </div>
+                <!-- 100 -->
+                <div class="flex items-center gap-2" data-value="100">
+                    <img src="https://placehold.co/56x28/8b5cf6/ffffff?text=100" alt="100 Note" class="w-14 h-7 object-cover rounded">
+                    <span class="font-bold text-base w-10 text-right">100</span>
+                    <span class="font-medium text-gray-500">X</span>
+                    <input type="number" class="denomination-input w-full p-1.5 border border-gray-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-indigo-600">
+                    <span class="font-medium text-gray-500">=</span>
+                    <span class="row-total font-bold text-base w-20 text-right">0</span>
+                </div>
+                <!-- 50 -->
+                <div class="flex items-center gap-2" data-value="50">
+                    <img src="https://placehold.co/56x28/22d3ee/ffffff?text=50" alt="50 Note" class="w-14 h-7 object-cover rounded">
+                    <span class="font-bold text-base w-10 text-right">50</span>
+                    <span class="font-medium text-gray-500">X</span>
+                    <input type="number" class="denomination-input w-full p-1.5 border border-gray-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-indigo-600">
+                    <span class="font-medium text-gray-500">=</span>
+                    <span class="row-total font-bold text-base w-20 text-right">0</span>
+                </div>
+                <!-- 20 -->
+                <div class="flex items-center gap-2" data-value="20">
+                    <img src="https://placehold.co/56x28/d9f99d/ffffff?text=20" alt="20 Note" class="w-14 h-7 object-cover rounded">
+                    <span class="font-bold text-base w-10 text-right">20</span>
+                    <span class="font-medium text-gray-500">X</span>
+                    <input type="number" class="denomination-input w-full p-1.5 border border-gray-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-indigo-600">
+                    <span class="font-medium text-gray-500">=</span>
+                    <span class="row-total font-bold text-base w-20 text-right">0</span>
+                </div>
+                <!-- 10 -->
+                <div class="flex items-center gap-2" data-value="10">
+                    <img src="https://placehold.co/56x28/a16207/ffffff?text=10" alt="10 Note" class="w-14 h-7 object-cover rounded">
+                    <span class="font-bold text-base w-10 text-right">10</span>
+                    <span class="font-medium text-gray-500">X</span>
+                    <input type="number" class="denomination-input w-full p-1.5 border border-gray-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-indigo-600">
+                    <span class="font-medium text-gray-500">=</span>
+                    <span class="row-total font-bold text-base w-20 text-right">0</span>
+                </div>
+            </div>
+
+            <!-- ਰਕਮ ਅੱਖਰਾਂ ਵਿੱਚ -->
+            <div id="totalAmountInWords" class="mt-4 p-3 bg-gray-100 rounded-lg text-center font-medium text-indigo-700 text-sm break-words" style="min-height: 40px;">
+                Zero Rupees Only
+            </div>
+
+        </main>
+
+        <!-- ਫੁੱਟਰ ਬਟਨ -->
+        <footer class="sticky bottom-0 grid grid-cols-1 p-3 bg-white shadow-inner border-t border-gray-200">
+            <button id="clearButton" class="bg-blue-600 text-white font-semibold py-2.5 rounded-lg shadow-md hover:bg-blue-700">Clear</button>
+        </footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // ਕੈਸ਼ ਕਾਊਂਟਰ ਐਲੀਮੈਂਟਸ
+            const denominationInputs = document.querySelectorAll('.denomination-input');
+            const totalNotesEl = document.getElementById('totalNotes');
+            const cashTotalEl = document.getElementById('cashTotal');
+            const totalAmountEl = document.getElementById('totalAmount');
+            const clearButton = document.getElementById('clearButton');
+            const payeeNameInput = document.getElementById('payeeName');
+            const currentDateEl = document.getElementById('currentDate');
+            const onlinePaymentInput = document.getElementById('onlinePaymentInput');
+            const totalAmountInWordsEl = document.getElementById('totalAmountInWords');
+
+            // ਗੁਰਮੁਖੀ ਕਨਵਰਟਰ ਐਲੀਮੈਂਟਸ
+            const numberInput = document.getElementById('numberInput');
+            const gurmukhiOutput = document.getElementById('gurmukhiOutput');
+
+            // --- ਗੁਰਮੁਖੀ ਕਨਵਰਟਰ ਫੰਕਸ਼ਨ ---
+            function convertToGurmukhi(numberString) {
+                const gurmukhiNumerals = ['੦', '੧', '੨', '੩', '੪', '੫', '੬', '੭', '੮', '੯'];
+                let result = '';
+                for (let i = 0; i < numberString.length; i++) {
+                    const char = numberString[i];
+                    if (char >= '0' && char <= '9') {
+                        result += gurmukhiNumerals[parseInt(char)];
+                    } else {
+                        result += char; // ਦਸ਼ਮਲਵ ਆਦਿ ਲਈ
+                    }
+                }
+                return result;
+            }
+
+            // --- ਨੰਬਰ ਨੂੰ ਅੱਖਰਾਂ ਵਿੱਚ ਬਦਲਣ ਵਾਲਾ ਫੰਕਸ਼ਨ (ਭਾਰਤੀ ਸਿਸਟਮ) ---
+            function numberToWords(num) {
+                const a = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+                const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+                
+                num = Math.round(num); // ਦਸ਼ਮਲਵ ਹਟਾਓ
+                if (num === 0) return 'Zero Rupees Only';
+                if ((num.toString()).length > 9) return 'Overflow'; // 99 ਕਰੋੜ ਤੋਂ ਵੱਧ ਲਈ
+                
+                let n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+                if (!n) return '';
+                
+                let str = '';
+                str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + ' Crore ' : '';
+                str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + ' Lakh ' : '';
+                str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + ' Thousand ' : '';
+                str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + ' Hundred ' : '';
+                str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) : '';
+                
+                return str.replace(/\s+/g, ' ').trim() + ' Rupees Only';
+            }
+            // --- ਫੰਕਸ਼ਨ ਖਤਮ ---
+
+            // ਮੌਜੂਦਾ ਮਿਤੀ ਸੈੱਟ ਕਰੋ
+            function setDate() {
+                const today = new Date();
+                const d = String(today.getDate()).padStart(2, '0');
+                const m = String(today.getMonth() + 1).padStart(2, '0'); // ਮਹੀਨਾ 0-ਅਧਾਰਿਤ ਹੁੰਦਾ ਹੈ
+                const y = String(today.getFullYear()).slice(-2); // ਸਾਲ ਦੇ ਆਖਰੀ ਦੋ ਅੰਕ
+                currentDateEl.textContent = `${d}-${m}-${y}`;
+            }
+
+            // ਕੁੱਲ ਗਣਨਾ ਕਰੋ
+            function calculateTotals() {
+                let totalNotes = 0;
+                let cashTotal = 0;
+
+                // 1. ਨੋਟਾਂ ਦੀ ਗਿਣਤੀ
+                denominationInputs.forEach(input => {
+                    const row = input.closest('[data-value]');
+                    const denominationValue = parseInt(row.dataset.value, 10);
+                    const count = parseInt(input.value, 10) || 0;
+                    
+                    const rowTotal = denominationValue * count;
+                    
+                    row.querySelector('.row-total').textContent = rowTotal.toLocaleString('en-IN');
+                    
+                    totalNotes += count;
+                    cashTotal += rowTotal;
+                });
+
+                // 2. ਆਨਲਾਈਨ ਰਕਮ
+                const onlinePayment = parseInt(onlinePaymentInput.value, 10) || 0;
+
+                // 3. ਕੁੱਲ ਰਕਮ
+                const totalAmount = cashTotal + onlinePayment;
+
+                // 4. ਮੁੱਲ (values) ਅੱਪਡੇਟ ਕਰੋ
+                totalNotesEl.textContent = totalNotes.toLocaleString('en-IN');
+                cashTotalEl.textContent = cashTotal.toLocaleString('en-IN');
+                totalAmountEl.textContent = totalAmount.toLocaleString('en-IN');
+                
+                // 5. ਰਕਮ ਨੂੰ ਅੱਖਰਾਂ ਵਿੱਚ ਅੱਪਡੇਟ ਕਰੋ
+                totalAmountInWordsEl.textContent = numberToWords(totalAmount);
+            }
+
+            // --- ਇਵੈਂਟ ਲਿਸਨਰ ---
+
+            // ਕੈਸ਼ ਕਾਊਂਟਰ ਇਨਪੁਟਸ
+            denominationInputs.forEach(input => {
+                input.addEventListener('input', calculateTotals);
+            });
+            onlinePaymentInput.addEventListener('input', calculateTotals);
+
+            // ਗੁਰਮੁਖੀ ਕਨਵਰਟਰ ਇਨਪੁਟ
+            numberInput.addEventListener('input', function() {
+                gurmukhiOutput.value = convertToGurmukhi(this.value);
+            });
+
+            // ਕਲੀਅਰ ਬਟਨ (ਅੱਪਡੇਟ ਕੀਤਾ ਹੋਇਆ)
+            clearButton.addEventListener('click', function() {
+                // ਕੈਸ਼ ਕਾਊਂਟਰ ਫੀਲਡਸ
+                denominationInputs.forEach(input => {
+                    input.value = '';
+                });
+                payeeNameInput.value = '';
+                onlinePaymentInput.value = '';
+                
+                // ਗੁਰਮੁਖੀ ਫੀਲਡਸ
+                numberInput.value = '';
+                gurmukhiOutput.value = '';
+                
+                // ਟੋਟਲ ਰੀਸੈੱਟ ਕਰੋ
+                calculateTotals();
+            });
+
+            // ਸ਼ੁਰੂਆਤੀ ਸੈੱਟਅੱਪ
+            setDate(); // ਮਿਤੀ ਸੈੱਟ ਕਰੋ
+            calculateTotals(); // ਪੇਜ ਲੋਡ ਹੋਣ 'ਤੇ 0 ਟੋਟਲ ਦਿਖਾਓ
+        });
+    </script>
+
+</body>
+</html>
+
+  
