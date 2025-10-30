@@ -359,4 +359,14 @@
 
             // ਸ਼ੁਰੂਆਤੀ ਸੈੱਟਅੱਪ
             setDate(); // ਮਿਤੀ ਸੈੱਟ ਕਰੋ
-  
+            calculateTotals(); // ਪੇਜ ਲੋਡ ਹੋਣ 'ਤੇ 0 ਟੋਟਲ ਦਿਖਾਓ
+            
+            // --- ਸਮਾਂ ਅਤੇ ਦਿਨ ਸ਼ੁਰੂ ਕਰੋ ---
+            updateTimeAndDay(); // ਪਹਿਲੀ ਵਾਰ ਤੁਰੰਤ ਚਲਾਓ
+            setInterval(updateTimeAndDay, 1000); // ਹਰ ਸਕਿੰਟ ਅੱਪਡੇਟ ਕਰੋ
+        });
+    </script>
+
+</body>
+</html>
+
